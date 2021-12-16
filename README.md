@@ -1,0 +1,2 @@
+# OthelloArenaPython
+OthelloArena用のPythonプログラム
