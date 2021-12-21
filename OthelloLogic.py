@@ -1,3 +1,5 @@
+import copy
+
 def execute(board,action,player,size):
 
         dirs = [
@@ -65,7 +67,6 @@ def getMoves(board,player,size):
                         if(bool and not(legal_move in moves)):
                             moves.append(legal_move)
         return moves
-    
 
 def search(p,b,x,y,dir,size):
         if(x+dir[0]<0 or x+dir[0]>=size or y+dir[1]<0 or y+dir[1]>=size):
@@ -89,18 +90,18 @@ def search(p,b,x,y,dir,size):
 
 def getReverseboard(board):
         rev_board = board
+        _board = copy.deepcopy(board) #boardは参照型なので、予期せぬ上書きを起こす
         for x in range(len(rev_board)):
             for y in range(len(rev_board)):
-                board[x][y] = rev_board[x][y] * -1    
-        return board
+                _board[x][y] = rev_board[x][y] * -1    
+        return _board
 
 
 def printBoard(board):
-    
     for y in board:
         row = ''
         for x in y:
-            cell = '○ ' if x == 1 else '● ' if x == -1 else '  '
+            cell = '○ ' if x == 1 else '● ' if x == -1 else '- '
             row += cell
         print(row)
 
