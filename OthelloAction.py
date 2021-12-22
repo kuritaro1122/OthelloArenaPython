@@ -87,10 +87,11 @@ def turnOnDirection(board, action, player, direction):
 	return board
 def turnNum(board, action, player, direction):
 	distance = 1
+        size = len(board)
 	while True:
 		x = action[1] + distance * direction[1]
 		y = action[0] + distance * direction[0]
-		if 0 <= x and x < 8 and 0 <= y and y < 8:
+		if 0 <= x and x < size and 0 <= y and y < size: #変更
 			if board[x][y] == player * -1:
 				distance += 1
 			elif board[x][y] == player:
@@ -118,7 +119,7 @@ def negaMaxSearch(limit, board, moves, player, eva_func):
 		    _board,check = simulateBoard(board=board,action=m,player=player)
 		    if check == False:
 			    print('simulateError')
-			    return
+			    return 0 #変更
 		    _score = negaMaxLevel(limit=limit-1,board=_board,player=player*-1,eva_func=eva_func,move=m,current_score=-999)
 		
 		    #盤面候補の表示
@@ -135,7 +136,7 @@ def negaMaxSearch(limit, board, moves, player, eva_func):
             if len(moveIndexs) <= 1 or limit < 1: #追加
                     break #追加
 　　　　　　　　limit -= 2 #追加
-            print('再試行 limit=>{} moves={}'.format(limit,moveIndexs)
+            print('再試行 limit=>{} moves={}'.format(limit,moveIndexs) #追加
 
 	print('★ selected!! (index, score) = ({}, {})'.format(index,score))
 	return index
