@@ -111,9 +111,9 @@ def negaMaxSearch(limit, board, moves, player, eva_func):
 	index = 0
 	score = 999 * player
 
-        moveIndexs = [] #追加
-        while len(moveIndexs) <= 1 and limit > 0: #追加
-	    for i in range(len(moves)):
+        moveIndexs = range(len(moves)) #追加
+        while True:
+	    for i in copy.deepcopy(moveIndex): #書き換え
 		    m = moves[i]
 		    _board,check = simulateBoard(board=board,action=m,player=player)
 		    if check == False:
@@ -132,7 +132,10 @@ def negaMaxSearch(limit, board, moves, player, eva_func):
 			    index = i
                             moveIndexs = [i] #追加
 			    #print('update!! (index, score) = ({}, {})'.format(index,score))
-            limit -= 2 #追加
+            if len(moveIndexs) <= 1 or limit < 1: #追加
+                    break #追加
+　　　　　　　　limit -= 2 #追加
+            print('再試行 limit=>{} moves={}'.format(limit,moveIndexs)
 
 	print('★ selected!! (index, score) = ({}, {})'.format(index,score))
 	return index
