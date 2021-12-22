@@ -112,7 +112,7 @@ def negaMaxSearch(limit, board, moves, player, eva_func):
 	score = 999 * player
 
         moveIndexs = [] #追加
-        while len(moveIndexs) <= 1: #追加
+        while len(moveIndexs) <= 1 and limit > 0: #追加
 	    for i in range(len(moves)):
 		    m = moves[i]
 		    _board,check = simulateBoard(board=board,action=m,player=player)
