@@ -110,22 +110,30 @@ def negaMaxSearch(limit, board, moves, player, eva_func):
 	moves = getMoves(board, player)
 	index = 0
 	score = 999 * player
-	for i in range(len(moves)):
-		m = moves[i]
-		_board,check = simulateBoard(board=board,action=m,player=player)
-		if check == False:
-			print('simulateError')
-			return
-		_score = negaMaxLevel(limit=limit-1,board=_board,player=player*-1,eva_func=eva_func,move=m,current_score=-999)
-		
-		#盤面候補の表示
-		#print('root, player= {}, action= {}, score= {}'.format(player, m, _score))
-		#OthelloLogic.printBoard(_board)
 
-		if player * _score < player * score:
-			score = _score
-			index = i
-			#print('update!! (index, score) = ({}, {})'.format(index,score))
+        moveIndexs = [] #追加
+        while len(moveIndexs) <= 1: #追加
+	    for i in range(len(moves)):
+		    m = moves[i]
+		    _board,check = simulateBoard(board=board,action=m,player=player)
+		    if check == False:
+			    print('simulateError')
+			    return
+		    _score = negaMaxLevel(limit=limit-1,board=_board,player=player*-1,eva_func=eva_func,move=m,current_score=-999)
+		
+		    #盤面候補の表示
+		    #print('root, player= {}, action= {}, score= {}'.format(player, m, _score))
+		    #OthelloLogic.printBoard(_board)
+
+                    if player * _score = player * score #追加
+                            moveIndexs.append(i) #追加
+		    elif player * _score < player * score:
+			    score = _score
+			    index = i
+                            moveIndexs = [i] #追加
+			    #print('update!! (index, score) = ({}, {})'.format(index,score))
+            limit -= 2 #追加
+
 	print('★ selected!! (index, score) = ({}, {})'.format(index,score))
 	return index
 def negaMaxLevel(limit, board, player, eva_func, move, current_score):
