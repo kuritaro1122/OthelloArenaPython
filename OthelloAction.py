@@ -3,6 +3,7 @@ import random
 import pandas as pd
 import OthelloLogic
 import copy
+import OthelloAction_old
 
 #boardSize = 8
 
@@ -17,26 +18,42 @@ moves:現在の合法手の一覧
 """
 
 def getAction2(board,moves):
-	eva_func = pd.read_csv("EvaluationFunction.csv",header=None).values.tolist()
+	#return OthelloAction_old.getAction(board,moves)
+	eva_func = pd.read_csv("EvaluationFunction2.csv",header=None).values.tolist()
 	index = random.randrange(len(moves))
 	#index = simpleSearch(moves=moves,eva_func=eva_func)
-	
 	#index = negaMaxSearch(limit=3,board=board,moves=moves,player=1,eva_func=eva_func)
 	return moves[index]
+	
 
 def getAction(board,moves): #movesは2次配列
 	print("=== action start ===")
 	index = getActionIndex(board, moves)
+	for p in [1, -1]:
+		print('player:{} 確定石=>{}'.format(p,definiteStones(board=board,player=p)))
+	print('確定石=>{}'.format(definiteStones(board=board)))
+	print('残り=>{}'.format(countSpace(board)))
 	print("=== action end ===")
 	return moves[index]
 
 #不正な手を出した時の再試行回数
 tryNum = 5
 tryCount = tryNum
-
+depth_complete = 3
 def getActionIndex(board, moves):
 	eva_func = pd.read_csv("EvaluationFunction.csv",header=None).values.tolist()
+	space = countSpace(board)
+	"""
+	if len(board) * len(board) - space < 20:
+		index = negaMaxSearch(limit=depth1,board=board,moves=moves,player=1,eva_func=eva_func)
+	elif space < depth2:
+		eva_func = pd.read_csv("EvaluationFunction_one.csv",header=None).values.tolist()
+		index = negaMaxSearch(limit=depth2,board=board,moves=moves,player=1,eva_func=eva_func)
+	else:
+		index = negaMaxSearch(limit=depth2,board=board,moves=moves,player=1,eva_func=eva_func)
+	"""
 	index = negaMaxSearch(limit=5,board=board,moves=moves,player=1,eva_func=eva_func)
+
 	#不正な手を防止
 	global tryNum
 	global tryCount
@@ -62,7 +79,6 @@ def simpleSearch(moves, eva_func):
 			print("スコア更新", score)
 	return index
 
-
 #石を置いた後の盤面を返す.
 def simulateBoard(board, action, player):
 	_board = copy.deepcopy(board)
@@ -87,11 +103,11 @@ def turnOnDirection(board, action, player, direction):
 	return board
 def turnNum(board, action, player, direction):
 	distance = 1
-        size = len(board)
+	size = len(board)
 	while True:
 		x = action[1] + distance * direction[1]
 		y = action[0] + distance * direction[0]
-		if 0 <= x and x < size and 0 <= y and y < size: #変更
+		if 0 <= x and x < size and 0 <= y and y < size:
 			if board[x][y] == player * -1:
 				distance += 1
 			elif board[x][y] == player:
@@ -106,38 +122,42 @@ def turnNum(board, action, player, direction):
 def getMoves(board, player):
 	l = len(board[0])
 	return OthelloLogic.getMoves(board=board,player=player,size=l)
+def countSpace(board):
+	space = 0
+	for b1 in board:
+		for b2 in b1:
+			if b2 == 0:
+				space += 1
+	return space
 
 def negaMaxSearch(limit, board, moves, player, eva_func):
 	moves = getMoves(board, player)
 	index = 0
 	score = 999 * player
-
-        moveIndexs = range(len(moves)) #追加
-        while True:
-	    for i in copy.deepcopy(moveIndex): #書き換え
-		    m = moves[i]
-		    _board,check = simulateBoard(board=board,action=m,player=player)
-		    if check == False:
-			    print('simulateError')
-			    return 0 #変更
-		    _score = negaMaxLevel(limit=limit-1,board=_board,player=player*-1,eva_func=eva_func,move=m,current_score=-999)
-		
-		    #盤面候補の表示
-		    #print('root, player= {}, action= {}, score= {}'.format(player, m, _score))
-		    #OthelloLogic.printBoard(_board)
-
-                    if player * _score = player * score #追加
-                            moveIndexs.append(i) #追加
-		    elif player * _score < player * score:
-			    score = _score
-			    index = i
-                            moveIndexs = [i] #追加
-			    #print('update!! (index, score) = ({}, {})'.format(index,score))
-            if len(moveIndexs) <= 1 or limit < 1: #追加
-                    break #追加
-　　　　　　　　limit -= 2 #追加
-            print('再試行 limit=>{} moves={}'.format(limit,moveIndexs) #追加
-
+	moveIndexs = list(range(len(moves)))
+	while True: #追加
+		for i in range(len(moves)):
+			m = moves[i]
+			_board,check = simulateBoard(board=board,action=m,player=player)
+			if check == False:
+				print('simulateError')
+				return 0
+			_score = negaMaxLevel(limit=limit-1,board=_board,player=player*-1,eva_func=eva_func,move=m,current_score=-999)
+			_score = _score * pow(-1, limit-1)
+			#盤面候補の表示
+			#print('root, player= {}, action= {}, score= {}'.format(player, m, _score))
+			#OthelloLogic.printBoard(_board)
+			if player * _score < player * score:
+				score = _score
+				index = i
+				moveIndexs = [i]
+				#print('update!! (index, score) = ({}, {})'.format(index,score))
+			elif player * _score == player * score:
+				moveIndexs.append(i)
+		if len(moveIndexs) <= 1 or limit < 1: #追加
+			break;
+		limit -= 2 #追加
+		print('再試行 limit=>{} moves={}'.format(limit,moveIndexs)) #追加
 	print('★ selected!! (index, score) = ({}, {})'.format(index,score))
 	return index
 def negaMaxLevel(limit, board, player, eva_func, move, current_score):
@@ -168,31 +188,37 @@ def negaMaxLevel(limit, board, player, eva_func, move, current_score):
 		#OthelloLogic.printBoard(_board)
 	return score
 
+definiteStoneScore = 30
+#確定石の得点を反映させた評価関数
 def evaFuncDefiniteStone(eva_func, board):
 	#OthelloLogic.printBoard(board)
 	_eva_func = copy.deepcopy(eva_func)
-	_dire = [0, 1]
-	length = len(board)
-	for y in range(length):
-		for x in range(length):
+	for s in definiteStones(board):
+		_eva_func[s[0]][s[1]] = max(eva_func[s[0]][s[1]], definiteStoneScore)
+		#print('definiteStone ({},{}) score:{}=>{}'.format(s[0],s[1],eva_func[s[0]][s[1]],_eva_func[s[0]][s[1]]))
+	return _eva_func
+#確定石の取得
+def definiteStones(board, player=0):
+	stones = []
+	dire = [0,1]
+	for y in range(len(board)):
+		for x in range(len(board[y])):
 			definite = True
-			for dy in _dire:
-				for dx in _dire:
+			for dy in dire:
+				for dx in dire:
 					if dy == 0 and dx == 0:
 						continue
-					definite = definite and definiteLine(board=board,pos=[y,x],dire=[dy,dx])
+					definite = definite and definiteLine(board=board,pos=[y,x],dire=[dy,dx],player=player)
 			if definite == True:
-				_eva_func[y][x] = abs(_eva_func[y][x])
-				#print('definiteStone ({},{}) score:{}=>{}'.format(y,x,eva_func[y][x],_eva_func[y][x]))
-			#if definite == False:
-				#print('not definiteStone ({},{}) score:{}'.format(y,x,eva_func[y][x]))
-	return _eva_func
-def definiteLine(board, pos, dire):
+				stones.append([y, x])
+	return stones
+def definiteLine(board, pos, dire, player=0):
 	definite = False
 	length = len(board)
-	player = board[pos[0]][pos[1]]
-	if player == 0:
+	if board[pos[0]][pos[1]] == 0 or (player!=0 and board[pos[0]][pos[1]]!=player):
 		return False
+	if player == 0:
+		player = board[pos[0]][pos[1]]
 	if dire[0] == 0 and dire[1] == 0:
 		print('Error')
 		return True
@@ -205,8 +231,7 @@ def definiteLine(board, pos, dire):
 				definite = True
 				break
 			elif board[y][x] != player:
-				definite = False
+				#definite = False
 				break
 			step += 1
 	return definite
-
