@@ -1,7 +1,7 @@
 import copy
 
 def execute(board,action,player,size):
-
+        _board = copy.deepcopy(board) ##
         dirs = [
             [-1,-1],
             [0,-1],
@@ -12,19 +12,18 @@ def execute(board,action,player,size):
             [0,1],
             [1,1]
         ]
-        board[action[1]][action[0]] = player
+        _board[action[1]][action[0]] = player
         for dir in dirs:
-            bool,flips = executeFlip(board,player,action[1],action[0],dir,size)
+            bool,flips = executeFlip(_board,player,action[1],action[0],dir,size)
             if(bool):
                 for flip in flips:
-                    board[flip[0]][flip[1]] = player
-        return board
+                    _board[flip[0]][flip[1]] = player
+        return _board
     
 
 def executeFlip(b,p,x,y,dir,size):
         if(x+dir[0]<0 or x+dir[0]>=size or y+dir[1]<0 or y+dir[1]>=size):
             return 0,None
-        
         if(b[x+dir[0]][y+dir[1]] == (p*-1)):
             flips = []
             flips.append([x+dir[0],y+dir[1]])
@@ -34,17 +33,13 @@ def executeFlip(b,p,x,y,dir,size):
             while(True):
                 if(x+inc_dir[0]<0 or x+inc_dir[0]>=size or y+inc_dir[1]<0 or y+inc_dir[1]>=size):
                     return 0,None
-                
                 if(b[x+inc_dir[0]][y+inc_dir[1]] == p):
                     return 1,flips
                 elif(b[x+inc_dir[0]][y+inc_dir[1]] == 0):
                     return 0,None
-                
                 flips.append([x+inc_dir[0],y+inc_dir[1]])
                 inc_dir[0] += dir[0]
                 inc_dir[1] += dir[1]
-            
-        
         return 0,None
 
 def getMoves(board,player,size):
@@ -104,5 +99,3 @@ def printBoard(board):
             cell = '○ ' if x == 1 else '● ' if x == -1 else '- '
             row += cell
         print(row)
-
-    

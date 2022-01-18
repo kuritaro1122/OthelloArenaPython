@@ -1,11 +1,8 @@
 import random
-#import csv
-import pandas as pd
+#import pandas as pd
 import OthelloLogic
 import copy
-import OthelloAction_old
-
-#boardSize = 8
+#import OthelloAction_old
 
 """
 引数について
@@ -16,16 +13,18 @@ moves:現在の合法手の一覧
 詳しい説明はサイトのHomeページをご覧ください。
 
 """
+eva_func = [[30,-12,0,-1,-1,0,-12,30],[-12,-15,-3,-3,-3,-3,-15,-12],[0,-3,0,-1,-1,0,-3,0],[-1,-3,-1,-1,-1,-1,-3,-1],[-1,-3,-1,-1,-1,-1,-3,-1],[0,-3,0,-1,-1,0,-3,0],[-12,-15,-3,-3,-3,-3,-15,-12],[30,-12,0,-1,-1,0,-12,30]]
 
 def getAction2(board,moves):
 	#return OthelloAction_old.getAction(board,moves)
-	eva_func = pd.read_csv("EvaluationFunction2.csv",header=None).values.tolist()
+	#eva_func = pd.read_csv("EvaluationFunction2.csv",header=None).values.tolist()
 	index = random.randrange(len(moves))
 	#index = simpleSearch(moves=moves,eva_func=eva_func)
 	#index = negaMaxSearch(limit=3,board=board,moves=moves,player=1,eva_func=eva_func)
 	return moves[index]
-	
-
+def getAction3(board,moves):
+	index = simpleSearch(moves=moves,eva_func=eva_func)
+	return moves[index]
 def getAction(board,moves): #movesは2次配列
 	print("=== action start ===")
 	index = getActionIndex(board, moves)
@@ -39,21 +38,10 @@ def getAction(board,moves): #movesは2次配列
 #不正な手を出した時の再試行回数
 tryNum = 5
 tryCount = tryNum
-depth_complete = 3
 def getActionIndex(board, moves):
-	eva_func = pd.read_csv("EvaluationFunction.csv",header=None).values.tolist()
+	#eva_func = pd.read_csv("EvaluationFunction.csv",header=None).values.tolist()
 	space = countSpace(board)
-	"""
-	if len(board) * len(board) - space < 20:
-		index = negaMaxSearch(limit=depth1,board=board,moves=moves,player=1,eva_func=eva_func)
-	elif space < depth2:
-		eva_func = pd.read_csv("EvaluationFunction_one.csv",header=None).values.tolist()
-		index = negaMaxSearch(limit=depth2,board=board,moves=moves,player=1,eva_func=eva_func)
-	else:
-		index = negaMaxSearch(limit=depth2,board=board,moves=moves,player=1,eva_func=eva_func)
-	"""
-	index = negaMaxSearch(limit=5,board=board,moves=moves,player=1,eva_func=eva_func)
-
+	index = negaMaxSearch(limit=3,board=board,moves=moves,player=1,eva_func=eva_func)
 	#不正な手を防止
 	global tryNum
 	global tryCount
@@ -78,7 +66,6 @@ def simpleSearch(moves, eva_func):
 			score = _score
 			print("スコア更新", score)
 	return index
-
 #石を置いた後の盤面を返す.
 def simulateBoard(board, action, player):
 	_board = copy.deepcopy(board)
@@ -94,6 +81,8 @@ def simulateBoard(board, action, player):
 	offset = [-1, 0, 1]
 	for o1 in offset: #各方向の石をひっくり返す
 		for o2 in offset:
+			if (o1 == 0 and o2 == 0): 
+				continue
 			_board = turnOnDirection(board=_board,action=action,player=player,direction=[o1, o2])
 	return _board,True
 def turnOnDirection(board, action, player, direction):
@@ -130,6 +119,7 @@ def countSpace(board):
 				space += 1
 	return space
 
+#negaScout法による探索
 def negaMaxSearch(limit, board, moves, player, eva_func):
 	moves = getMoves(board, player)
 	index = 0
@@ -151,7 +141,7 @@ def negaMaxSearch(limit, board, moves, player, eva_func):
 				score = _score
 				index = i
 				moveIndexs = [i]
-				#print('update!! (index, score) = ({}, {})'.format(index,score))
+				print('update!! (index, score) = ({}, {})'.format(index,score))
 			elif player * _score == player * score:
 				moveIndexs.append(i)
 		if len(moveIndexs) <= 1 or limit < 1: #追加
@@ -191,11 +181,11 @@ def negaMaxLevel(limit, board, player, eva_func, move, current_score):
 definiteStoneScore = 30
 #確定石の得点を反映させた評価関数
 def evaFuncDefiniteStone(eva_func, board):
-	#OthelloLogic.printBoard(board)
+	OthelloLogic.printBoard(board)
 	_eva_func = copy.deepcopy(eva_func)
 	for s in definiteStones(board):
 		_eva_func[s[0]][s[1]] = max(eva_func[s[0]][s[1]], definiteStoneScore)
-		#print('definiteStone ({},{}) score:{}=>{}'.format(s[0],s[1],eva_func[s[0]][s[1]],_eva_func[s[0]][s[1]]))
+		print('definiteStone ({},{}) score:{}=>{}'.format(s[0],s[1],eva_func[s[0]][s[1]],_eva_func[s[0]][s[1]]))
 	return _eva_func
 #確定石の取得
 def definiteStones(board, player=0):
@@ -234,4 +224,14 @@ def definiteLine(board, pos, dire, player=0):
 				#definite = False
 				break
 			step += 1
-	return definite
+	for foward in [1, -1]:
+		step = 1
+		while True:
+			y = pos[0] + dire[0] * step * foward
+			x = pos[1] + dire[1] * step * foward
+			if (x < 0 or x >= length) or (y < 0 or y >= length):
+				break
+			elif board[y][x] == 0:
+				return definite
+			step += 1
+	return True
