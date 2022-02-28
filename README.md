@@ -1,4 +1,4 @@
 # OthelloArenaPython
 OthelloArena用のPythonプログラム
 
-![image] OthelloGUIIMG0.png
+![image](OthelloGUIIMG0.png)
