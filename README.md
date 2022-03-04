@@ -2,7 +2,7 @@
 OthelloArena用のPythonプログラム
 
 # OthelloGUI
-![image](OthelloGUIIMG0.png)
+![image](IMG/OthelloGUIIMG1.png)
 
 使用できるAI
 * Player（手動）
