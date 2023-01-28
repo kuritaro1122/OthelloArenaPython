@@ -5,17 +5,14 @@ from typing import overload
 import OthelloAction
 import OthelloLogic
 import pyxel
-#import asyncio
 import copy
 import PyxelButton as pb
 import numpy as np
 import PyxelSceneManager as pcm
 import time
-import requests
+#import requests
 import json
 import AuthCheck
-#import concurrent.futures
-#import threading
 from AsyncFunction import AsyncFunctionManager as afm
 
 # SCREEN
@@ -27,26 +24,29 @@ SCENE_PLAY = 1
 class Scenes:
     SCENE_TITLE = 0
     SCENE_LOCALPLAY = 1
-    SCENE_OTHELLOARENA = 2
-    SCENE_LEAGUE = 3
-    SCENE_HISTORY = 4
+    #SCENE_OTHELLOARENA = 2
+    #SCENE_LEAGUE = 3
+    #SCENE_HISTORY = 4
+    SCENE_LEAGUE = 2
+    SCENE_HISTORY = 3
 
 class App(pcm.BaseSceneManager):
     def __init__(self):
-        pyxel.init(width=SCREEN_WIDTH,height=SCREEN_HEIGHT,caption="Othello GUI",fps=60)
+        pyxel.init(width=SCREEN_WIDTH,height=SCREEN_HEIGHT,title="Othello GUI",fps=60)
         pyxel.load("othelloGUI.pyxres")
         pyxel.mouse(True)
-        super().__init__(scenes=[Scene_Title(),Scene_LocalPlay(),Scene_OthelloArena(),Scene_League(),Scene_History()],beginIndex=0)
+        #super().__init__(scenes=[Scene_Title(),Scene_LocalPlay(),Scene_OthelloArena(),Scene_League(),Scene_History()],beginIndex=0)
+        super().__init__(scenes=[Scene_Title(),Scene_LocalPlay(),Scene_League(),Scene_History()],beginIndex=0)
         pyxel.run(super().update, super().draw)
 
 class Scene_Title(pcm.BaseScene):
     def start(self):
         pass
     def update(self):
-        if pyxel.btnr(pyxel.KEY_SPACE) or pyxel.btnr(pyxel.MOUSE_LEFT_BUTTON):
+        if pyxel.btnr(pyxel.KEY_SPACE) or pyxel.btnr(pyxel.MOUSE_BUTTON_LEFT):
             self.loadScene(Scenes.SCENE_LOCALPLAY)
-        if pyxel.btnr(pyxel.KEY_2):
-            self.loadScene(2)
+        #if pyxel.btnr(pyxel.KEY_2):
+        #    self.loadScene(Scenes.SCENE_OTHELLOARENA)
     def draw(self):
         title = "Othello Arena GUI!"
         pyxel.cls(pyxel.COLOR_BLACK)
@@ -77,13 +77,13 @@ class Scene_LocalPlay(pcm.BaseScene):
             if pyxel.btnp(pyxel.KEY_LEFT):
                 self.changeWhite(add=-1)
             boardEndPos = self.othelloBoard.size*self.othelloBoard.IMG_SIZE
-            if pyxel.btnp(pyxel.KEY_SPACE) or (pyxel.btnp(pyxel.MOUSE_LEFT_BUTTON) and (0<pyxel.mouse_x<boardEndPos and 0<pyxel.mouse_y<boardEndPos)):
+            if pyxel.btnp(pyxel.KEY_SPACE) or (pyxel.btnp(pyxel.MOUSE_BUTTON_LEFT) and (0<pyxel.mouse_x<boardEndPos and 0<pyxel.mouse_y<boardEndPos)):
                 self.startGame()
         else:
             self.game()
         self.buttonManager.update()
     def draw(self):
-        pyxel.cls(pyxel.COLOR_DARKBLUE)
+        pyxel.cls(pyxel.COLOR_DARK_BLUE)
         self.othelloBoard.drawBoard(player=self.turn,showPut=self.playing and self.players[0 if self.turn == 1 else 1] == self.players_list.index("player"))
         self.othelloBoard_historys.drawBoard(index=1,num=1,x=SCREEN_WIDTH-8*8,y=SCREEN_HEIGHT-8*8-15,offset=-1)
         x = SCREEN_WIDTH-65
@@ -138,7 +138,7 @@ class Scene_LocalPlay(pcm.BaseScene):
             if self.step == self.STEP_BEFORE:
                 self.action_Human(player=self.turn)
     def action_Human(self,player):
-        if pyxel.btnp(pyxel.MOUSE_LEFT_BUTTON):
+        if pyxel.btnp(pyxel.MOUSE_BUTTON_LEFT):
             input = self.othelloBoard.input(mouse_x=pyxel.mouse_x,mouse_y=pyxel.mouse_y,player=player)
             if input:
                 self.step = self.STEP_AFTER
@@ -174,6 +174,7 @@ class ProcessStatus:
     RUNNING = 1
     FINISH = 2
 
+"""
 class Scene_OthelloArena(pcm.BaseScene):
     def __init__(self):
         #self.connected = False
@@ -200,7 +201,7 @@ class Scene_OthelloArena(pcm.BaseScene):
         pass
     def update(self):
         if self.flag_connectArena == ProcessStatus.WAIT:
-            if pyxel.btnp(pyxel.MOUSE_LEFT_BUTTON):
+            if pyxel.btnp(pyxel.MOUSE_BUTTON_LEFT):
                 self.flag_connectArena = ProcessStatus.RUNNING
                 afm().createAsyncFunc(func=self.requestArena)
         elif self.flag_connectArena == ProcessStatus.FINISH:
@@ -327,6 +328,7 @@ class Scene_OthelloArena(pcm.BaseScene):
         self.othelloBoard.setBoard(nextBoard)
         self.flag_action = ProcessStatus.WAIT
         self.flag_connectArena = ProcessStatus.FINISH
+"""
 
 class Scene_League(pcm.BaseScene):
     def start(self):

@@ -45,7 +45,7 @@ class TextButtonPro(TextButton):
         pyxel.text(x=self.x,y=self.y,s=self.s(),col=self.col())
 
 class ButtonManager:
-    def __init__(self, buttons:np.array([[BaseButton,lambda:bool,np.array(int)]]), click=pyxel.MOUSE_LEFT_BUTTON):
+    def __init__(self, buttons:np.array([[BaseButton,lambda:bool,np.array(int)]]), click=pyxel.MOUSE_BUTTON_LEFT):
         self.buttons:np.array([[BaseButton,lambda:bool,np.array(int)]]) = buttons
         self.click = click
     def append(self, button:BaseButton, active:lambda:bool, keys:np.array(int)):
