@@ -1,5 +1,7 @@
-def execute(board,action,player,size):
+import copy
 
+def execute(board,action,player,size):
+        _board = copy.deepcopy(board)
         dirs = [
             [-1,-1],
             [0,-1],
@@ -10,13 +12,13 @@ def execute(board,action,player,size):
             [0,1],
             [1,1]
         ]
-        board[action[1]][action[0]] = player
+        _board[action[1]][action[0]] = player
         for dir in dirs:
-            bool,flips = executeFlip(board,player,action[1],action[0],dir,size)
+            bool,flips = executeFlip(_board,player,action[1],action[0],dir,size)
             if(bool):
                 for flip in flips:
-                    board[flip[0]][flip[1]] = player
-        return board
+                    _board[flip[0]][flip[1]] = player
+        return _board
     
 
 def executeFlip(b,p,x,y,dir,size):
@@ -88,15 +90,15 @@ def search(p,b,x,y,dir,size):
         return 0,None
 
 def getReverseboard(board):
-        rev_board = board
+        _board = copy.deepcopy(board)
+        rev_board = _board
         for x in range(len(rev_board)):
             for y in range(len(rev_board)):
-                board[x][y] = rev_board[x][y] * -1    
-        return board
+                _board[x][y] = rev_board[x][y] * -1    
+        return _board
 
 
 def printBoard(board):
-    
     for y in board:
         row = ''
         for x in y:
@@ -104,4 +106,11 @@ def printBoard(board):
             row += cell
         print(row)
 
+def countBoard(board, player):
+    count = 0
+    for y in board:
+        for x in y:
+            if player == x:
+                count += 1
+    return count
     
