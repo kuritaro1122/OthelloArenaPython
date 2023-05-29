@@ -59,6 +59,7 @@ def selectPlayer(playerNum:int=2):
 		player1 = int(input('player1:'))
 	if playerNum > 1:
 		player2 = int(input('player2:'))
+	return modules[player1].__name__, modules[player2].__name__
 
 # 次の手を取得する
 def getAction1(board,moves):

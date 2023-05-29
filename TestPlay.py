@@ -1,5 +1,6 @@
 import OthelloAction
 import OthelloLogic
+from OthelloRecord.OthelloRecoder import Recoder
 
 #sizeを変更することでテストプレイする盤面の大きさを変更できます。
 #size = 4
@@ -15,7 +16,9 @@ board[int(size/2)][int(size/2)]=1;
 player = -1
 moves = OthelloLogic.getMoves(board,player,size)
 
-OthelloAction.selectPlayer(playerNum=2)
+p1_name, p2_name = OthelloAction.selectPlayer(playerNum=2)
+recoder = Recoder()
+recoder.setMatchInfo(0,'TestPlay',0,p1_name,1,p2_name)
 
 while(True):
 	if(player == -1):
@@ -28,6 +31,8 @@ while(True):
 		exit()
 	board = OthelloLogic.execute(board,action,player,size)
 	OthelloLogic.printBoard(board)
+	score = OthelloLogic.countBoard(board, player=1)
+	recoder.updateMatch(action[1], action[0], score, score)
 	print('現在の合法手一覧')
 	print(moves)
 	moves = OthelloLogic.getMoves(board,player*-1,size)
@@ -38,4 +43,5 @@ while(True):
 	else:
 		player = player * -1
 
+recoder.exportMatchResult()
 print('正常に終了しました。')		
