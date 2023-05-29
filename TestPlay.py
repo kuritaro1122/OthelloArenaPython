@@ -14,11 +14,14 @@ board[int(size/2)][int(size/2)]=1;
 
 player = -1
 moves = OthelloLogic.getMoves(board,player,size)
+
+OthelloAction.selectPlayer(playerNum=2)
+
 while(True):
 	if(player == -1):
-		action = OthelloAction.getAction(OthelloLogic.getReverseboard(board),moves)
+		action = OthelloAction.getAction1(OthelloLogic.getReverseboard(board),moves)
 	else:
-		action = OthelloAction.getAction(board,moves)
+		action = OthelloAction.getAction2(board,moves)
 	if(not (action in moves)):
 		print(board)
 		print('合法手ではない手が打たれました' + action)

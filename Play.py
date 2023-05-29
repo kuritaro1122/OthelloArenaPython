@@ -40,8 +40,8 @@ else:
             board[x][y] = rev_board[x][y] * -1
     moves = json.loads(data['moves'])
 
-
-action = json.dumps(OthelloAction.getAction(board,moves))
+OthelloAction.selectPlayer(playerNum=1)
+action = json.dumps(OthelloAction.getAction1(board,moves))
 payload = {'action' : action,'player':player}
 
 while(True):
@@ -69,6 +69,6 @@ while(True):
     	board = json.loads(data['board'])
 
     moves = json.loads(data['moves'])
-    action = json.dumps(OthelloAction.getAction(board,moves))
+    action = json.dumps(OthelloAction.getAction1(board,moves))
     payload = {'action' : action,'player':player}
 
