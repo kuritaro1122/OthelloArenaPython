@@ -26,12 +26,15 @@ player1 = 0
 player2 = 0
 
 # OthelloActions/import.txt を参照してOthelloAction用のmoduleをimportする
-with open(IMPORT_TXT) as f:
+with open(os.path.join(os.path.dirname(__file__), IMPORT_TXT)) as f:
 	for line in f.readlines():
 		line = line.replace('\n', '')
+		targetAbsDir =  os.path.join(os.path.dirname(__file__), line)
+		currentAbsDir = os.getcwd()
+		relDirPath = os.path.relpath(targetAbsDir, currentAbsDir)
 		_modules = []
-		print('line', line)
-		for path in __find_scripts(line):
+		for path in __find_scripts(relDirPath):
+			print('path', path)
 			if os.path.isabs(path):
 				print('絶対パスは対応していません')
 				raise NotImplementedError()
@@ -67,3 +70,6 @@ def getAction1(board,moves):
 
 def getAction2(board,moves):
 	return __exexute_othelloAction(modules[player2],board,moves)
+
+def getAction(board,moves,aiIndex):
+	return __exexute_othelloAction(modules[aiIndex],board,moves)

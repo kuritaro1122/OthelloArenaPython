@@ -1,3 +1,4 @@
+import os
 import datetime
 import csv
 import re
@@ -15,7 +16,7 @@ LABEL = {
 
     'date' : 9,
 }
-LOG_FILE = 'OthelloRecord/export/wthor.csv'
+LOG_FILE = 'export/wthor.csv'
 
 class Recoder:
     def __init__(self):
@@ -48,7 +49,7 @@ class Recoder:
         self.bTScore = bTScore
     
     def exportMatchResult(self):
-        with open(LOG_FILE, 'a') as f:
+        with open(os.path.join(os.path.dirname(__file__), LOG_FILE), 'a') as f:
             #headerLabel = str.join([l for l in LABEL])
             #header = f.readlines()[0].replace('\n', '').replace(' ', '')
             #print(headerLabel, header)
@@ -58,7 +59,7 @@ class Recoder:
 
     def loadLogs(self):
         lines = []
-        with open(LOG_FILE, 'r') as f:
+        with open(os.path.join(os.path.dirname(__file__), LOG_FILE), 'r') as f:
             reader = csv.reader(f)
             for r in reader:
                 if r[LABEL['tournamentId']].isdecimal():
