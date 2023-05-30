@@ -1,8 +1,13 @@
-import random
-#import pandas as pd
-import OthelloLogic
+import sys
 import copy
-#import OthelloAction_old
+import os
+
+# 相対パスを取得してモジュールをインポート
+cur = copy.deepcopy(sys.path)
+p = os.path.join(os.path.dirname(__file__), '../')
+sys.path.append(p)
+import OthelloLogic
+sys.path = cur
 
 """
 引数について
