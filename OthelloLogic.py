@@ -107,10 +107,16 @@ def printBoard(board):
         print(row)
 
 def countBoard(board, player):
+    """石をカウントする. player==0 の時は全ての石をカウントする.
+
+    board : list[list[int]]
+    player : int    
+    """
     count = 0
     for y in board:
         for x in y:
-            if player == x:
+            if player == 0:
+                 count += 1
+            elif player == x:
                 count += 1
     return count
-    
