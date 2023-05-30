@@ -1,0 +1,1 @@
+tournamentId,tournamentName,blackPlayerId,blackPlayerName,whitePlayerId,whitePlayerName,blackScore,blackTheoreticalScore,transcript,date
