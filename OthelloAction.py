@@ -34,7 +34,7 @@ with open(os.path.join(os.path.dirname(__file__), IMPORT_TXT)) as f:
 		relDirPath = os.path.relpath(targetAbsDir, currentAbsDir)
 		_modules = []
 		for path in __find_scripts(relDirPath):
-			print('path', path)
+			#print('path', path)
 			if os.path.isabs(path):
 				print('絶対パスは対応していません')
 				raise NotImplementedError()
