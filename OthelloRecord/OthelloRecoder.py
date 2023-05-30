@@ -62,7 +62,7 @@ class Recoder:
         with open(os.path.join(os.path.dirname(__file__), LOG_FILE), 'r') as f:
             reader = csv.reader(f)
             for r in reader:
-                if r[LABEL['tournamentId']].isdecimal():
+                if len(r) > 0 and r[LABEL['tournamentId']].isdecimal():
                     lines.append(r)
         return lines
     def load(self, index:int):
