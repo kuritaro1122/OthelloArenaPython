@@ -1,13 +1,20 @@
 import sys
-import copy
 import os
+import copy
+import random
+import importlib
 
-# 相対パスを取得してモジュールをインポート
-cur = copy.deepcopy(sys.path)
-p = os.path.join(os.path.dirname(__file__), '../')
-sys.path.append(p)
-import OthelloLogic
-sys.path = cur
+# 相対パスから親階層のモジュールをインポート
+OthelloLogic = None
+def __executeOnPath(absPath:str, func:lambda:None):
+    current = copy.deepcopy(sys.path)
+    sys.path.append(absPath)
+    func()
+    sys.path = current
+def importModules():
+	global OthelloLogic
+	OthelloLogic = importlib.import_module('OthelloLogic')
+__executeOnPath(os.path.join(os.path.dirname(__file__), '../'), importModules)
 
 """
 引数について

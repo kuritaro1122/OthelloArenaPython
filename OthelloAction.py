@@ -1,5 +1,6 @@
 import sys
 import os
+import copy
 import glob
 import importlib
 
@@ -7,15 +8,25 @@ FUNCTION_NAME = 'getAction'
 IMPORT_TXT = 'OthelloActions/import.txt'
 
 # ディレクトリからモジュールを検索するための関数
+__module = None
+def __executeOnPath(absPath:str, func:lambda:None):
+    current = copy.deepcopy(sys.path)
+    sys.path.append(absPath)
+    func()
+    sys.path = current
 def __find_scripts(directory:str):
 	script_paths = glob.glob(os.path.join(directory, '*.py'))
 	return script_paths
-
 def __find_module_from_path(script_path:str):
-	module_name = str.replace(os.path.splitext(script_path)[0], '/', '.')
-	module = importlib.import_module(module_name)
-	return module
+	dir_path = os.path.dirname(script_path)
+	module_name = os.path.basename(script_path).split('.')[0]
+	def func():
+		global __module
+		__module = importlib.import_module(module_name)
+	__executeOnPath(dir_path, func)
+	return __module
 
+# モジュールを実行して手を取得する
 def __exexute_othelloAction(module, board, moves):
 	function_name = FUNCTION_NAME
 	function = getattr(module, function_name)
@@ -34,7 +45,6 @@ with open(os.path.join(os.path.dirname(__file__), IMPORT_TXT)) as f:
 		relDirPath = os.path.relpath(targetAbsDir, currentAbsDir)
 		_modules = []
 		for path in __find_scripts(relDirPath):
-			#print('path', path)
 			if os.path.isabs(path):
 				print('絶対パスは対応していません')
 				raise NotImplementedError()
