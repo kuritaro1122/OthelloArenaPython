@@ -16,6 +16,3 @@ Actionを追加する際には OthelloActions/ の中に.pyファイルを追加
 ## Note
 このプログラムをアプリケーションに組み込む際には, このリポジトリをサブモジュールとすると良いかもしれません。
 * [OthelloArenaPython-PyxelGUI](https://github.com/kuritaro1122/OthelloArenaPython-PyxelGUI) : Pyxelで作成したGUI
-* logファイル(OthelloRecord/export/wthor.csv)の保存形式はこちらを参考にしました.
-  * [オセロの棋譜データベースWTHORの読み込み方](https://qiita.com/tanaka-a/items/e21d32d2931a24cfdc97)
-  
