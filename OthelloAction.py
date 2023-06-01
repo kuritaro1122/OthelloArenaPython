@@ -26,6 +26,12 @@ def __find_module_from_path(script_path:str):
 	__executeOnPath(dir_path, func)
 	return __module
 
+Client = None
+def __importModules():
+	global Client
+	Client = importlib.import_module('OthelloActionClient').OthelloActionClient
+__executeOnPath(os.path.join(os.path.dirname(__file__), 'Server/'), __importModules)
+
 # モジュールを実行して手を取得する
 def __exexute_othelloAction(module, board, moves):
 	function_name = FUNCTION_NAME
@@ -74,12 +80,23 @@ def selectPlayer(playerNum:int=2):
 		player2 = int(input('player2:'))
 	return modules[player1].__name__, modules[player2].__name__
 
+client = None
+tryConnect = True
+
+if tryConnect:
+	try:
+		client = Client()
+	except:
+		client = None
+
 # 次の手を取得する
 def getAction1(board,moves):
-	return __exexute_othelloAction(modules[player1],board,moves)
+	return getAction(board,moves,player1)
 
 def getAction2(board,moves):
-	return __exexute_othelloAction(modules[player2],board,moves)
+	return getAction(board,moves,player2)
 
 def getAction(board,moves,aiIndex):
+	if client != None:
+		return client.getAction(aiIndex=aiIndex,board=board,moves=moves)
 	return __exexute_othelloAction(modules[aiIndex],board,moves)
