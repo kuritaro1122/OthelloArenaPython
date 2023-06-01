@@ -2,6 +2,7 @@ import OthelloAction
 import OthelloLogic
 from OthelloRecord.OthelloRecoder import Recoder
 import sys
+import time
 
 #sizeを変更することでテストプレイする盤面の大きさを変更できます。
 #size = 4
@@ -30,6 +31,7 @@ while(True):
 		action = OthelloAction.getAction1(OthelloLogic.getReverseboard(board),moves)
 	else:
 		action = OthelloAction.getAction2(board,moves)
+	#time.sleep(1)
 	if(not (action in moves)):
 		print(board)
 		print('合法手ではない手が打たれました' + action)
@@ -42,9 +44,7 @@ while(True):
 	print(moves)
 	moves = OthelloLogic.getMoves(board,player*-1,size)
 	if(len(moves) == 0):
-		moves = OthelloLogic.getMoves(board,player,size)
-		if(len(moves) == 0):
-			break
+		break
 	else:
 		player = player * -1
 
