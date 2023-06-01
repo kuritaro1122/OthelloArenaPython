@@ -18,7 +18,7 @@ def __importModules_Framework():
 	ClientBase = importlib.import_module('ClientBase').ClientBase
 def __importModules():
     global Server
-    Server = importlib.import_module('OthelloActionServer')
+    Server = importlib.import_module('OthelloActionServers')
 __executeOnPath(os.path.join(os.path.dirname(__file__), 'Framework/'), __importModules_Framework)
 __executeOnPath(os.path.join(os.path.dirname(__file__), ''), __importModules)
 

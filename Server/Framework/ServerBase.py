@@ -93,7 +93,7 @@ class MultipleServerBase:
         while True:
             sock_cl, addr = self.__socket.accept()
             afm.createAsyncFunc(lambda:recv_client(sock_cl,addr))
-        self.close()
+        #self.close()
 
     def respond(self, message:str) -> str:
         return ""

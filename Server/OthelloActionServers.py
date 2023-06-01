@@ -68,7 +68,7 @@ def move2txt(move:list) -> str:
 class OthelloActionServer(MultipleServerBase):
     def __init__(self) -> None:
         self.server = getHostAndPort()
-        super().__init__(timeout=60, buffer=1024)
+        super().__init__(timeout=60*60, buffer=1024)
         #super().__init__(5, self.respond, timeout=60, buffer=1024)
         self.accept(self.server, socket.AF_INET, socket.SOCK_STREAM, 0)
     

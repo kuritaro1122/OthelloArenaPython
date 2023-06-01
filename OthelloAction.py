@@ -29,7 +29,7 @@ def __find_module_from_path(script_path:str):
 Client = None
 def __importModules():
 	global Client
-	Client = importlib.import_module('OthelloActionClient').OthelloActionClient
+	Client = importlib.import_module('OthelloActionClients')
 __executeOnPath(os.path.join(os.path.dirname(__file__), 'Server/'), __importModules)
 
 # モジュールを実行して手を取得する
@@ -85,7 +85,7 @@ tryConnect = True
 
 if tryConnect:
 	try:
-		client = Client()
+		client = Client.OthelloActionClient()
 	except:
 		client = None
 
