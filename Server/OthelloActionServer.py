@@ -3,7 +3,7 @@ import os
 import socket
 import copy
 import importlib
-from Framework.ServerBase import BlockingServerBase
+from Framework.ServerBase import *
 
 # 相対パスから親階層のモジュールをインポート
 OthelloAction = None
@@ -65,10 +65,11 @@ def txt2move(txt:str) -> list:
 def move2txt(move:list) -> str:
     return str(move[0]) + str(move[1])
 
-class OthelloActionServer(BlockingServerBase):
+class OthelloActionServer(MultipleServerBase):
     def __init__(self) -> None:
         self.server = getHostAndPort()
         super().__init__(timeout=60, buffer=1024)
+        #super().__init__(5, self.respond, timeout=60, buffer=1024)
         self.accept(self.server, socket.AF_INET, socket.SOCK_STREAM, 0)
     
     def respond(self, message:str) -> str:
@@ -80,9 +81,6 @@ class OthelloActionServer(BlockingServerBase):
             ai_index = int(elements[1])
             boards = txt2board(elements[2])
             moves = txt2moves(elements[3])
-            #print('elements', elements)
-            #print('arg', ai_index, boards, moves)
-            #print('arg', type(ai_index), type(boards), type(moves))
             action = OthelloAction.getAction(boards, moves, ai_index)
             return ','.join([elements[0], move2txt(action)])
         return 'Server accept !!'
